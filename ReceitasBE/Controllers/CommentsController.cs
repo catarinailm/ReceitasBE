@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReceitasBE.Data;
 using ReceitasBE.Models;
+using ReceitasBE.DTOs;
+using ReceitasBE.Services;
 
 namespace ReceitasBE.Controllers
 {
@@ -15,71 +17,28 @@ namespace ReceitasBE.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly RecipesDbContext _context;
+        private readonly CommentsService _commentsService;
 
         public CommentsController(RecipesDbContext context)
         {
-            _context = context;
+            UsersService usersService = new UsersService(context);
+            RecipesService recipesService = new RecipesService(context, usersService, new IngredientsService(context));
+            _commentsService = new CommentsService(context, usersService, recipesService);
         }
 
-        // GET: api/Comments/Recipes/
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComment()
+        // GET: api/Comments/Recipes/guid_receita
+        [HttpGet("Recipes/{guid_receita}")]
+        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsForRecipe(Guid guid_receita)
         {
-            return await _context.Comment.ToListAsync();
-        }
-
-        // GET: api/Comments/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(Guid id)
-        {
-            var comment = await _context.Comment.FindAsync(id);
-
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return comment;
-        }
-
-        // PUT: api/Comments/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(Guid id, Comment comment)
-        {
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(comment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(_commentsService.GetAllCommentsForRecipe(guid_receita));
         }
 
         // POST: api/Comments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        public async Task<ActionResult<Comment>> PostComment(CommentDTO commentDTO)
         {
-            _context.Comment.Add(comment);
-            await _context.SaveChangesAsync();
+           Comment comment = _commentsService.createComment(commentDTO);
 
             return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
         }
@@ -88,21 +47,15 @@ namespace ReceitasBE.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
-            var comment = await _context.Comment.FindAsync(id);
+            Comment comment = _commentsService.deleteComment(id);
+
             if (comment == null)
             {
                 return NotFound();
             }
 
-            _context.Comment.Remove(comment);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
-
-        private bool CommentExists(Guid id)
-        {
-            return _context.Comment.Any(e => e.Id == id);
-        }
+       
     }
 }

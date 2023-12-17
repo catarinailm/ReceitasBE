@@ -20,21 +20,21 @@ namespace ReceitasBE.Controllers
 
         public RecipesController(RecipesDbContext context)
         {
-            _recipesService = new RecipesService(context, new UsersService(context));
+            _recipesService = new RecipesService(context, new UsersService(context), new IngredientsService(context));
         }
 
         // GET: api/Recipes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
+        public async Task<ActionResult<IEnumerable<RecipeDTO>>> GetRecipes()
         {
             return Ok(_recipesService.GetAllRecipes());
         }
 
         // GET: api/Recipes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Recipe>> GetRecipe(Guid id)
+        public async Task<ActionResult<RecipeDTO>> GetRecipe(Guid id)
         {
-            var recipe = _recipesService.findRecipeById(id);
+            var recipe = _recipesService.GetRecipe(id);
 
             if (recipe == null)
             {
@@ -78,7 +78,7 @@ namespace ReceitasBE.Controllers
         // POST: api/Recipes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Recipe>> PostRecipe(RecipeDTO recipeDTO)
+        public async Task<ActionResult<Recipe>> PostRecipe(CreateRecipeDTO recipeDTO)
         {
            Recipe recipe = _recipesService.createRecipe(recipeDTO);
 

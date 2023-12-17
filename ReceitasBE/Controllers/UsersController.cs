@@ -93,6 +93,14 @@ namespace ReceitasBE.Controllers
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
+        // POST: api/Users/Login
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("/Login")]
+        public async Task<ActionResult<bool>> LoginUser(LoginDTO loginDTO)
+        {
+            return Ok(_usersService.login(loginDTO));
+        }
+
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)

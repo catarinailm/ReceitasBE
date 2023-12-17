@@ -14,7 +14,7 @@ namespace ReceitasBE.Data
         public virtual DbSet<User> Users { get; set; } = default!;
         public virtual DbSet<Recipe> Recipes { get; set; } = default!;
         public virtual DbSet<Comment> Comment { get; set; } = default!;
-        public virtual DbSet<Ingredients> Ingredients { get; set; } = default!;
-        public virtual DbSet<Average_rating> Average_rating { get; set; } = default!;
+        public virtual DbSet<Ingredient> Ingredients { get; set; } = default!;
+        public virtual DbSet<Rating> Rating { get; set; } = default!;
     }
 }

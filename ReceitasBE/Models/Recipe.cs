@@ -17,5 +17,7 @@ namespace ReceitasBE.Models
         public DateTime Data_created { get; set; }
         public DateTime Data_updated { get; set; }
         public DateTime Data_deleted { get; set; }
+        public List<Ingredient> Ingredients { get; set;}
+        public List<Rating> Ratings { get; set; }
     }
 }

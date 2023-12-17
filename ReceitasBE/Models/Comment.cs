@@ -12,8 +12,7 @@ namespace ReceitasBE.Models
         public User User { get; set; }
         public string Text { get; set; }
         public DateTime Date_created { get; set; }
-        public DateTime Date_updated { get; set; }
         public DateTime Date_deleted { get; set; }
-        public bool deleted { get; set; }
+        public bool Deleted { get; set; }
     }
 }

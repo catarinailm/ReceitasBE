@@ -22,6 +22,25 @@ namespace ReceitasBE.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ReceitasBE.Models.Average_rating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("Average_rating");
+                });
+
             modelBuilder.Entity("ReceitasBE.Models.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -34,8 +53,8 @@ namespace ReceitasBE.Migrations
                     b.Property<DateTime>("Date_deleted")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Date_updated")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("RecipeId")
                         .HasColumnType("uniqueidentifier");
@@ -47,9 +66,6 @@ namespace ReceitasBE.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("deleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RecipeId");
@@ -57,6 +73,30 @@ namespace ReceitasBE.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("ReceitasBE.Models.Ingredient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Amount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("Ingredients");
                 });
 
             modelBuilder.Entity("ReceitasBE.Models.Recipe", b =>
@@ -156,6 +196,17 @@ namespace ReceitasBE.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ReceitasBE.Models.Average_rating", b =>
+                {
+                    b.HasOne("ReceitasBE.Models.Recipe", "Recipe")
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+                });
+
             modelBuilder.Entity("ReceitasBE.Models.Comment", b =>
                 {
                     b.HasOne("ReceitasBE.Models.Recipe", "Recipe")
@@ -175,6 +226,17 @@ namespace ReceitasBE.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ReceitasBE.Models.Ingredient", b =>
+                {
+                    b.HasOne("ReceitasBE.Models.Recipe", "Recipe")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+                });
+
             modelBuilder.Entity("ReceitasBE.Models.Recipe", b =>
                 {
                     b.HasOne("ReceitasBE.Models.User", "User")
@@ -184,6 +246,11 @@ namespace ReceitasBE.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ReceitasBE.Models.Recipe", b =>
+                {
+                    b.Navigation("Ingredients");
                 });
 #pragma warning restore 612, 618
         }

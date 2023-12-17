@@ -1,4 +1,5 @@
-﻿using ReceitasBE.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ReceitasBE.Data;
 using ReceitasBE.DTOs;
 using ReceitasBE.Models;
 
@@ -58,5 +59,23 @@ namespace ReceitasBE.Services
             return _context.Users.Any(e => e.Username == username);
         }
 
+        public bool login(LoginDTO loginDTO)
+        {
+            User user = findUserByUsername(loginDTO.Username);
+
+            return user.Password.Equals(loginDTO.Password);
+        }
+
+        private User findUserByUsername(String username)
+        {
+            var user = _context.Users.Single(user => user.Username == username);
+
+            if (user == null)
+            {
+                // Lançar excepção
+            }
+            
+            return user;
+        }
     }
 }
