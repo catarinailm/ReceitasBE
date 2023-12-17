@@ -37,7 +37,7 @@ namespace ReceitasBE.Services
             recipe.Data_updated = DateTime.Now;
             recipe.Deleted = false;
             recipe.Approved = false;
-            recipe.Ingredients = recipeDTO.Ingredients.Select(ingredientDTO => _ingredientsService.createIngredient(ingredientDTO)).ToList();
+            //recipe.Ingredients = recipeDTO.Ingredients.Select(ingredientDTO => _ingredientsService.createIngredient(ingredientDTO)).ToList();
 
             _context.Recipes.Add(recipe);
             _context.SaveChanges();
