@@ -55,7 +55,7 @@ namespace ReceitasBE.Services
             return toRecipeDTO(findRecipeById(id));
         }
 
-        private RecipeDTO toRecipeDTO(Recipe recipe)
+        private static RecipeDTO toRecipeDTO(Recipe recipe)
         {
             RecipeDTO recipeDTO = new RecipeDTO();
             recipeDTO.Id = recipe.Id;

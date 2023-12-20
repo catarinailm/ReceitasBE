@@ -9,7 +9,7 @@ namespace ReceitasBE.Services
     {
         private readonly RecipesDbContext _context;
 
-        public IngredientsService(RecipesDbContext context) 
+        public IngredientsService(RecipesDbContext context)
         {
             _context = context;
         }

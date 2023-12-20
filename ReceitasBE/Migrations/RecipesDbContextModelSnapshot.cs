@@ -22,23 +22,51 @@ namespace ReceitasBE.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ReceitasBE.Models.Average_rating", b =>
+            modelBuilder.Entity("ReceitasBE.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecipeId");
+                    b.ToTable("Category");
 
-                    b.ToTable("Average_rating");
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1cb49a78-e9fb-421c-87d3-a8d863936cf0"),
+                            Name = "Refeições"
+                        },
+                        new
+                        {
+                            Id = new Guid("65330e3f-1929-466b-9aea-bbb9e8aa6134"),
+                            Name = "Light"
+                        },
+                        new
+                        {
+                            Id = new Guid("a58f8085-5c6b-4c93-a6df-589f902a3a7e"),
+                            Name = "Entradas"
+                        },
+                        new
+                        {
+                            Id = new Guid("1b136692-f806-45b1-9812-4e7bd8609a4e"),
+                            Name = "Petiscos"
+                        },
+                        new
+                        {
+                            Id = new Guid("8710397d-1de5-45fd-9122-17cd0b9cf00e"),
+                            Name = "Sobremesas"
+                        },
+                        new
+                        {
+                            Id = new Guid("0c316fd3-3daf-48c7-8549-449f5253684c"),
+                            Name = "Bebidas"
+                        });
                 });
 
             modelBuilder.Entity("ReceitasBE.Models.Comment", b =>
@@ -99,6 +127,25 @@ namespace ReceitasBE.Migrations
                     b.ToTable("Ingredients");
                 });
 
+            modelBuilder.Entity("ReceitasBE.Models.Rating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("Rating");
+                });
+
             modelBuilder.Entity("ReceitasBE.Models.Recipe", b =>
                 {
                     b.Property<Guid>("Id")
@@ -146,6 +193,29 @@ namespace ReceitasBE.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("ReceitasBE.Models.RecipeCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeCategory");
                 });
 
             modelBuilder.Entity("ReceitasBE.Models.User", b =>
@@ -196,17 +266,6 @@ namespace ReceitasBE.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ReceitasBE.Models.Average_rating", b =>
-                {
-                    b.HasOne("ReceitasBE.Models.Recipe", "Recipe")
-                        .WithMany()
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Recipe");
-                });
-
             modelBuilder.Entity("ReceitasBE.Models.Comment", b =>
                 {
                     b.HasOne("ReceitasBE.Models.Recipe", "Recipe")
@@ -237,6 +296,15 @@ namespace ReceitasBE.Migrations
                     b.Navigation("Recipe");
                 });
 
+            modelBuilder.Entity("ReceitasBE.Models.Rating", b =>
+                {
+                    b.HasOne("ReceitasBE.Models.Recipe", null)
+                        .WithMany("Ratings")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ReceitasBE.Models.Recipe", b =>
                 {
                     b.HasOne("ReceitasBE.Models.User", "User")
@@ -248,9 +316,37 @@ namespace ReceitasBE.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ReceitasBE.Models.RecipeCategory", b =>
+                {
+                    b.HasOne("ReceitasBE.Models.Category", "Category")
+                        .WithMany("RecipeCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReceitasBE.Models.Recipe", "Recipe")
+                        .WithMany("RecipeCategories")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("ReceitasBE.Models.Category", b =>
+                {
+                    b.Navigation("RecipeCategories");
+                });
+
             modelBuilder.Entity("ReceitasBE.Models.Recipe", b =>
                 {
                     b.Navigation("Ingredients");
+
+                    b.Navigation("Ratings");
+
+                    b.Navigation("RecipeCategories");
                 });
 #pragma warning restore 612, 618
         }

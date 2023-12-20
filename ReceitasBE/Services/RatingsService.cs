@@ -23,6 +23,7 @@ namespace ReceitasBE.Services
             rating.Value = ratingDTO.Value;
 
             rating.Id = Guid.NewGuid();
+            rating.Recipe = recipe;
             rating.RecipeId = recipe.Id;
 
             _context.Rating.Add(rating);
